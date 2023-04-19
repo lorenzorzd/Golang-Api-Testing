@@ -31,7 +31,6 @@ func main() {
 	//Post function
 
 	app.Post("/api/todos", func(c *fiber.Ctx) error {
-		fmt.Print("IN POST FUNCITON")
 
 		todo := &Todo{}
 		fmt.Print("Created Todo Var")
@@ -48,6 +47,28 @@ func main() {
 		fmt.Print(c.JSON(todos))
 		fmt.Print("returned Json")
 
+		return c.JSON(todos)
+	})
+
+	app.Patch("/api/todos/:id/done", func(c *fiber.Ctx) error {
+		id, err := c.ParamsInt("id")
+
+		if err != nil {
+			return c.Status(401).SendString("Invalid ID")
+		}
+
+		for i, t := range todos {
+			if t.ID == id {
+				todos[i].Done = true
+				break
+			}
+		}
+
+		return c.JSON(todos)
+
+	})
+
+	app.Get("/api/todos", func(c *fiber.Ctx) error {
 		return c.JSON(todos)
 	})
 
